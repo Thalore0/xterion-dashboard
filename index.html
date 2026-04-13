@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>XTERION Model Dashboard</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1e1e2e;
+            color: #cdd6f4;
+            margin: 0;
+            padding: 40px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #89b4fa;
+            border-bottom: 2px solid #89b4fa;
+            padding-bottom: 10px;
+        }
+        .current-model {
+            background: #313244;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 20px 0;
+            border-left: 5px solid #a6e3a1;
+        }
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .model-card {
+            background: #313244;
+            border-radius: 8px;
+            padding: 20px;
+            transition: transform 0.2s;
+        }
+        .model-card:hover {
+            transform: translateY(-3px);
+        }
+        .model-card.active {
+            border: 2px solid #a6e3a1;
+        }
+        .model-card.local {
+            border-left: 4px solid #fab387;
+        }
+        .model-card.cloud {
+            border-left: 4px solid #89b4fa;
+        }
+        .model-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .model-size {
+            color: #a6adc8;
+            font-size: 0.9em;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-top: 10px;
+        }
+        .badge-using {
+            background: #a6e3a1;
+            color: #1e1e2e;
+        }
+        .badge-local {
+            background: #fab387;
+            color: #1e1e2e;
+        }
+        .badge-cloud {
+            background: #89b4fa;
+            color: #1e1e2e;
+        }
+        .stats {
+            background: #313244;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #89b4fa;
+        }
+        .stat-label {
+            color: #a6adc8;
+            font-size: 0.9em;
+        }
+        .timestamp {
+            color: #6c7086;
+            font-size: 0.85em;
+            margin-top: 30px;
+            text-align: center;
+        }
+        .today-highlight {
+            background: #45475a;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .today-number {
+            font-size: 3em;
+            font-weight: bold;
+            color: #a6e3a1;
+        }
+        .cost-display {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #fab387;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 XTERION Model Dashboard</h1>
+        
+        <div class="current-model">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div style="font-size: 1.5em; font-weight: bold; color: #a6e3a1;">✓ CURRENTLY USING</div>
+                    <div style="font-size: 2em; margin-top: 10px;" id="current-model-name">kimi-k2.5:cloud</div>
+                    <div style="color: #a6adc8; margin-top: 5px;">Fast • Real-time chat • Best for urgent responses</div>
+                </div>
+                <div style="font-size: 4em;">⚡</div>
+            </div>
+        </div>
+        
+        <div class="today-highlight">
+            <div style="color: #a6adc8; margin-bottom: 10px;">TODAY'S USAGE</div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;">
+                <div>
+                    <div class="today-number" id="today-requests">0</div>
+                    <div style="color: #a6adc8;">Requests</div>
+                </div>
+                <div>
+                    <div class="today-number" id="today-tokens" style="color: #89b4fa;">0</div>
+                    <div style="color: #a6adc8;">Tokens</div>
+                </div>
+                <div>
+                    <div class="cost-display" id="today-cost">$0.00</div>
+                    <div style="color: #a6adc8;">Est. Cost</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats">
+            <div style="text-align: center; color: #89b4fa; margin-bottom: 15px; font-weight: bold;">
+                USAGE TRACKER (UPDATED EVERY 15 MIN)
+            </div>
+            <div class="stats-grid">
+                <div>
+                    <div class="stat-value" id="total-requests">-</div>
+                    <div class="stat-label">Total Requests</div>
+                </div>
+                <div>
+                    <div class="stat-value" id="total-cloud" style="color: #89b4fa;">-</div>
+                    <div class="stat-label">Cloud</div>
+                </div>
+                <div>
+                    <div class="stat-value" id="total-local" style="color: #fab387;">-</div>
+                    <div class="stat-label">Local</div>
+                </div>
+                <div>
+                    <div class="stat-value" id="total-cost" style="color: #a6e3a1;">-</div>
+                    <div class="stat-label">Est. Cost</div>
+                </div>
+            </div>
+        </div>
+        
+        <h2>📊 Available Models</h2>
+        
+        <div class="model-grid">
+            <div class="model-card cloud active">
+                <div class="model-name">kimi-k2.5:cloud</div>
+                <div class="model-size">☁️ Cloud • No local storage</div>
+                <div style="margin-top: 10px; color: #cdd6f4;">Primary model for real-time chat. Fast, reliable, best reasoning.</div>
+                <span class="badge badge-using">USING NOW</span>
+            </div>
+            
+            <div class="model-card local">
+                <div class="model-name">gemma4:e4b</div>
+                <div class="model-size">💻 Local • 9.6 GB</div>
+                <div style="margin-top: 10px; color: #cdd6f4;">Best for research, batch tasks, offline work. Slower but free.</div>
+                <span class="badge badge-local">LOCAL READY</span>
+            </div>
+            
+            <div class="model-card local">
+                <div class="model-name">ministral-3:8b</div>
+                <div class="model-size">💻 Local • 6.0 GB</div>
+                <div style="margin-top: 10px; color: #cdd6f4;">Mistral model for general tasks. Fast inference.</div>
+                <span class="badge badge-local">LOCAL READY</span>
+            </div>
+            
+            <div class="model-card local">
+                <div class="model-name">qwen2.5-coder:7b</div>
+                <div class="model-size">💻 Local • 4.7 GB</div>
+                <div style="margin-top: 10px; color: #cdd6f4;">Specialized for code. Great for programming tasks.</div>
+                <span class="badge badge-local">LOCAL READY</span>
+            </div>
+            
+            <div class="model-card local">
+                <div class="model-name">qwen2.5:3b</div>
+                <div class="model-size">💻 Local • 1.9 GB</div>
+                <div style="margin-top: 10px; color: #cdd6f4;">Smallest, fastest local model. Basic tasks, summaries.</div>
+                <span class="badge badge-local">LOCAL READY</span>
+            </div>
+        </div>
+        
+        <div class="stats">
+            <div style="text-align: center; color: #89b4fa; margin-bottom: 15px; font-weight: bold;">
+                MONTHLY USAGE HISTORY
+            </div>
+            <table style="width: 100%; border-collapse: collapse;" id="history-table">
+                <thead>
+                    <tr style="color: #89b4fa;">
+                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid #45475a;">Date</th>
+                        <th style="text-align: center; padding: 10px; border-bottom: 1px solid #45475a;">Cloud</th>
+                        <th style="text-align: center; padding: 10px; border-bottom: 1px solid #45475a;">Local</th>
+                        <th style="text-align: center; padding: 10px; border-bottom: 1px solid #45475a;">Tokens</th>
+                        <th style="text-align: center; padding: 10px; border-bottom: 1px solid #45475a;">Cost</th>
+                    </tr>
+                </thead>
+                <tbody id="history-body">
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 20px; color: #6c7086;">
+                            Loading data... (Refresh in 15 min)
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="stats" style="text-align: left;">
+            <div style="color: #89b4fa; font-weight: bold; margin-bottom: 15px;">🎯 MODEL STRATEGY</div>
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #89b4fa;">Fast/Real-time → Cloud (kimi-k2.5:cloud)</strong><br>
+                Chat, urgent requests, interactive tasks
+            </div>
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #fab387;">Slow/Research → Local (gemma4:e4b)</strong><br>
+                Web research, batch processing, document analysis
+            </div>
+            <div>
+                <strong style="color: #a6e3a1;">Code Tasks → Local (qwen2.5-coder:7b)</strong><br>
+                Programming help, code review, debugging
+            </div>
+        </div>
+        
+        <div class="timestamp">
+            Last dashboard update: <span id="last-update">Loading...</span><br>
+            Auto-updates every: <strong>15 minutes</strong>
+        </div>
+    </div>
+    
+    <script>
+        // Load data from JSON file
+        function loadDashboardData() {
+            fetch('dashboard-data.json')
+                .then(response => response.json())
+                .then(data => {
+                    // Update stats
+                    document.getElementById('total-requests').textContent = data.total_requests;
+                    document.getElementById('total-cloud').textContent = data.total_cloud;
+                    document.getElementById('total-local').textContent = data.total_local;
+                    document.getElementById('total-cost').textContent = '$' + data.total_cost.toFixed(2);
+                    
+                    // Today's data
+                    document.getElementById('today-requests').textContent = data.today_cloud + data.today_local;
+                    document.getElementById('today-cost').textContent = '$' + data.today_cost.toFixed(2);
+                    if (data.today_tokens) {
+                        document.getElementById('today-tokens').textContent = data.today_tokens.toLocaleString();
+                    }
+                    
+                    // Update timestamp
+                    document.getElementById('last-update').textContent = 
+                        new Date(data.last_updated).toLocaleString();
+                    
+                    // Update history table
+                    updateHistoryTable(data.history || {});
+                })
+                .catch(error => {
+                    console.log('Waiting for data file...');
+                });
+        }
+        
+        function updateHistoryTable(history) {
+            const tbody = document.getElementById('history-body');
+            tbody.innerHTML = '';
+            
+            const dates = Object.keys(history).sort().reverse();
+            
+            if (dates.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; color: #6c7086;">No data yet. Tracking begins on next request.</td></tr>';
+                return;
+            }
+            
+            dates.slice(0, 14).forEach(date => {
+                const day = history[date];
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td style="padding: 10px; border-bottom: 1px solid #313244;">${date}</td>
+                    <td style="text-align: center; padding: 10px; border-bottom: 1px solid #313244; color: #89b4fa;">${day.cloud_requests || 0}</td>
+                    <td style="text-align: center; padding: 10px; border-bottom: 1px solid #313244; color: #fab387;">${day.local_requests || 0}</td>
+                    <td style="text-align: center; padding: 10px; border-bottom: 1px solid #313244;">${(day.total_tokens || 0).toLocaleString()}</td>
+                    <td style="text-align: center; padding: 10px; border-bottom: 1px solid #313244; color: ${day.estimated_cost > 0.5 ? '#fab387' : '#a6e3a1'};">$${(day.estimated_cost || 0).toFixed(2)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Load immediately and refresh every 15 minutes
+        loadDashboardData();
+        setInterval(loadDashboardData, 900000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "total_requests": 65,
+  "total_cloud": 55,
+  "total_local": 10,
+  "total_cost": 0.82,
+  "today_cloud": 5,
+  "today_local": 0,
+  "today_cost": 0.07,
+  "today_tokens": 3200,
+  "last_updated": "2026-04-13T09:08:00-07:00",
+  "history": {
+    "2026-04-13": {
+      "cloud_requests": 5,
+      "local_requests": 0,
+      "total_tokens": 3200,
+      "estimated_cost": 0.07
+    }
+  }
+}
