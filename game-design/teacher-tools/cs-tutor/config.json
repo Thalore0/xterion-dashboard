@@ -1,0 +1,7 @@
+{
+  "discord_token": "YOUR_BOT_TOKEN_HERE",
+  "teacher_discord_id": "YOUR_WIFE_DISCORD_ID_HERE",
+  "allowed_channels": ["java-help", "python-help", "cpp-help", "ask-anything"],
+  "summary_time": "07:30",
+  "summary_days": [0, 1, 2, 3, 4]
+}
